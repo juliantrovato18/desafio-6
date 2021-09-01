@@ -1,0 +1,35 @@
+{
+  "name": "desafio-6",
+  "engines": {
+    "node": "14.x"
+  },
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^16.7.0",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "firebase": "^8.10.0",
+    "firebase-admin": "^9.11.1",
+    "lodash": "^4.17.21",
+    "nanoid": "^3.1.25",
+    "nodemon": "^2.0.12",
+    "parcel": "^2.0.0-rc.0",
+    "typescript": "^4.3.5"
+  },
+  "scripts": {
+    "dev:api": "nodemon --watch 'server/index.ts' --exec ts-node server/dev.ts ",
+    "build:front": "parcel build ./client/index.html",
+    "dev": "parcel serve ./client/index.html",
+    "dev:all": "yarn dev && yarn dev:api",
+    "build:api": "tsc ./server/index.ts",
+    "build": "yarn build:front && yarn build:api",
+    "start": "node ./server/index.js"
+  },
+  "devDependencies": {
+    "@parcel/transformer-image": "2.0.0-rc.0"
+  },
+  "author": "juliantrovato <julian_todobien@hotmail.com>"
+}
