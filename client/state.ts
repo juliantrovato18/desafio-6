@@ -1,4 +1,4 @@
-//import  * as map from "lodash/map";
+import  map from "lodash/map";
 import { rtdb } from "./rtdb";
 
 
@@ -32,25 +32,26 @@ type Jugada = "piedra" | "papel" | "tijeras";
         this.data.history=(JSON.parse(localData));
         
     },
-    //   listenRoom(callback){
-    //      const currentState = this.getState();
-    //     const roomRef = rtdb.ref("/rooms/"+ currentState.rtdbRoomId);
-    //      roomRef.on("value", (snapshot) =>{
-    //          const players = snapshot.val();
-    //         const playersList:any = map(players);
-    //         playersList.forEach((element, index) => {
-    //          if (element.nombre == currentState.nombre) {
-    //               currentState.playerId = index.toString();
-    //         }
-    //              if(element.nombre != currentState.nombre){
-    //                  currentState.anotherPlayer = element.nombre
-    //                 currentState.playerPlay = element.originalPlay
-    //              }
-    //          })
-    //          this.setState(currentState);
-    //      })
-    //      if(callback) callback();
-    //   },
+    
+      listenRoom(callback){
+         const currentState = this.getState();
+         const roomRef = rtdb.ref("/rooms/"+ currentState.rtdbRoomId);
+          roomRef.on("value", (snapshot) =>{
+           const players = snapshot.val();
+          const playersList:any = map(players);
+          playersList.forEach((element, index) => {
+           if (element.nombre == currentState.nombre) {
+                  currentState.playerId = index.toString();
+          }
+          if(element.nombre != currentState.nombre){
+             currentState.anotherPlayer = element.nombre
+             currentState.playerPlay = element.originalPlay
+            }
+         })
+         this.setState(currentState);
+        })
+         if(callback) callback();
+         },
 
     getState(){
         return this.data

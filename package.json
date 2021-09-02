@@ -1,8 +1,5 @@
 {
   "name": "desafio-6",
-  "engines": {
-    "node": "14.x"
-  },
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {
