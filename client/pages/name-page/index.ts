@@ -118,7 +118,10 @@ export function initNamePage(params){
             state.signIn(()=>{
                state.askNewRoom(()=>{
                   state.accessToRoom(()=>{
-                    params.goTo("/instructions");
+                     state.listenRoom(()=>{
+                        params.goTo("/instructions");
+                     })
+                    
                   })
                })
               })
@@ -126,15 +129,15 @@ export function initNamePage(params){
    
            
         }else{
-            // state.accessToRoom(()=>{
-            //    state.addPlayer().then(res=>{
-            //       if(res == true){
-            //          params.goTo("/instructions") //compartir codigo
-            //       }else{
-            //          params.goTo("/welcome") //room llena
-            //       }
-            //    })
-            // })
+            state.signup(()=>{
+               state.signIn(()=>{
+                     state.accessToRoom(()=>{
+                              state.listenRoom(()=>{
+                                 params.goTo("/instructions");
+                              })
+                  })
+               })
+            })
         }
 
 

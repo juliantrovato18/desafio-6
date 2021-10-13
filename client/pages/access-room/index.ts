@@ -1,4 +1,5 @@
 const imgFondo = require("url:../../img/fondo.png");
+import { stat } from "fs";
 import { state } from "../../state";
 
 export function initAccessPage(params){
@@ -106,16 +107,18 @@ export function initAccessPage(params){
     const input = div.querySelector(".input");
     input.addEventListener("awesome", (res:any)=>{
        
-       currentState.currentGame.roomId = res.detail.text
+       currentState.roomId = res.detail.text
     });
 
 
 
    
     div.querySelector(".button2").addEventListener("click",()=>{
-       state.accessToRoom(()=>{
-         params.goTo("/play");
-       })
+       const currentState = state.getState();
+         params.goTo("/name");
+         
+         
+       
         
     })
     return div;

@@ -6,7 +6,8 @@ var firebaseAdmin = require("firebase-admin");
 var serviceAccount = require("./key.json");
 firebaseAdmin.initializeApp({
     credential: firebaseAdmin.credential.cert(serviceAccount),
-    databaseURL: "https://modulo-6-default-rtdb.firebaseio.com"
+    databaseURL: "https://modulo-6-default-rtdb.firebaseio.com",
+    projectId: "modulo-6"
 });
 var fs = firebaseAdmin.firestore();
 exports.fs = fs;

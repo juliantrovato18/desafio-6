@@ -2,6 +2,7 @@ import { initWelcomePage } from "./pages/welcome-page";
 import { initinstructionsPage } from "./pages/instructions";
 import { initiPlayPage } from "./pages/play";
 import { initNamePage } from "./pages/name-page";
+import { initInfoPage } from "./pages/info-room";
 import { initPageResults } from "./pages/results-win";
 import { initAccessPage } from "./pages/access-room";
 import { initPageResultsLose } from "./pages/results-lose";
@@ -34,6 +35,10 @@ const routes = [
     {
         path: /\/results/,
         component: initPageResults,
+    },
+    {
+        path: /\/info/,
+        component: initInfoPage,
     },
     {
         path: /\/resultslose/,

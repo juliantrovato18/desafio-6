@@ -26,7 +26,8 @@
     "start": "node ./server/index.js"
   },
   "devDependencies": {
-    "@parcel/transformer-image": "2.0.0-rc.0"
+    "@parcel/transformer-image": "2.0.0-rc.0",
+    "@types/lodash": "^4.14.172"
   },
   "author": "juliantrovato <julian_todobien@hotmail.com>"
 }

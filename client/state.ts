@@ -1,4 +1,5 @@
 import  map from "lodash/map";
+import { createSemanticDiagnosticsBuilderProgram } from "typescript";
 import { rtdb } from "./rtdb";
 
 
@@ -16,6 +17,7 @@ type Jugada = "piedra" | "papel" | "tijeras";
             computerPlay: "",
             myPlay : "",
             anotherPlayer: "",
+            start: "",
             playerPlay:"",
             originalPlay:""
         ,
@@ -33,19 +35,20 @@ type Jugada = "piedra" | "papel" | "tijeras";
         
     },
     
-      listenRoom(callback){
+    listenRoom(callback){
          const currentState = this.getState();
          const roomRef = rtdb.ref("/rooms/"+ currentState.rtdbRoomId);
           roomRef.on("value", (snapshot) =>{
            const players = snapshot.val();
           const playersList:any = map(players);
           playersList.forEach((element, index) => {
-           if (element.nombre == currentState.nombre) {
-                  currentState.playerId = index.toString();
-          }
+        //    if (element.nombre == currentState.nombre) {
+        //           currentState.playerId = index.toString();
+        //   }
           if(element.nombre != currentState.nombre){
              currentState.anotherPlayer = element.nombre
-             currentState.playerPlay = element.originalPlay
+             currentState.playerPlay = element.playerPlay
+             currentState.start = element.start
             }
          })
          this.setState(currentState);
@@ -71,31 +74,34 @@ type Jugada = "piedra" | "papel" | "tijeras";
         currentState.nombre = nombre;
     },
 
-    // addPlayer() {
-    //     const currentState = this.getState();
+    addPlayer(callback) {
+        const currentState = this.getState();
     
-    //     const rtdbRoomId = currentState.rtdbRoomId;
+        const rtdbRoomId = currentState.rtdbRoomId;
     
-    //     let data = fetch("/rooms/" + rtdbRoomId, {
-    //       method: "post",
-    //       headers: {
-    //         "content-type": "application/json",
-    //       },
-    //       body: JSON.stringify({
-    //         nombre: currentState.nombre,
-    //       }),
-    //     })
-    //       .then((res) => {
-    //         return res.json();
-    //       })
-    //       .then((data) => {
-    //         this.listenRoom();
+        let data = fetch("/rooms/" + rtdbRoomId, {
+          method: "post",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            nombre: currentState.nombre,
+            playerId: currentState.playerId,
+          }),
+        })
+          .then((res) => {
+            return res.json();
+          })
+          .then((data) => {
+            this.listenRoom();
     
-    //         return data;
-    //       });
-    //     return data;
-    //   },
+            return data;
+          });
+        return data;
+      },
     
+
+
     signup(callback){
         const currentState = this.getState();
         
@@ -147,7 +153,10 @@ type Jugada = "piedra" | "papel" | "tijeras";
                     headers: {
                         "content-type": "application/json",
                     },
-                    body: JSON.stringify({playerId: currentState.playerId})
+                    body: JSON.stringify({
+                        playerId: currentState.playerId,
+                        nombre: currentState.nombre
+                    })
                 }).then(res =>{
                    return res.json()
                 }).then(data =>{
@@ -169,11 +178,29 @@ type Jugada = "piedra" | "papel" | "tijeras";
                return res.json()
             }).then(data =>{
                 currentState.rtdbRoomId = data.rtdbRoomId
-                if(callback){
-                    callback();
-                }
-                
+                    this.listenRoom();
+                    if(callback)callback();
             })
+        },
+
+
+        changeState(callback){
+            const currentState = state.getState();
+
+            fetch("/rooms"+ currentState.rtdbRoomId+ "/players", {
+                method: "post",
+                headers:{
+                    "content-type": "application/json"
+                },
+                body: JSON.stringify({
+                    roomId: currentState.roomId,
+                    playerId: currentState.playerId,
+                    nombre: currentState.nombre,
+                    playerPlay: currentState.playerPlay,
+                    start: currentState.start
+                })
+            })
+            if(callback) callback();
         },
 
 

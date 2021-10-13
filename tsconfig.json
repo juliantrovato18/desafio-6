@@ -4,5 +4,6 @@
         "moduleResolution": "Node",
         "resolveJsonModule": true,
         "allowSyntheticDefaultImports": true,
+        
     }
 }
