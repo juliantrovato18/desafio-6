@@ -81,15 +81,13 @@ app.post("/rooms", function (req, res) {
         var roomRef = rtdb_2.rtdb.ref("/rooms/" + nanoid_1.nanoid());
         if (doc.exists) {
             roomRef.set({
-                players: [
-                    {
+                players: [{
                         nombre: nombre,
                         playerId: playerId,
                         online: true,
                         playerPlay: "",
                         start: ""
-                    }
-                ],
+                    }],
                 roomId: "",
                 rtdbRoomId: ""
             }).then(function () {
@@ -113,22 +111,50 @@ app.post("/rooms", function (req, res) {
 });
 app.post("/rooms/:rtdbRoomId", function (req, res) {
     var rtdbRoomId = req.params.rtdbRoomId;
+    var nombre = req.body.nombre;
+    var playerId = req.body.playerId;
     var playersRef = rtdb_2.rtdb.ref("/rooms/" + rtdbRoomId + "/players");
     playersRef.once("value", function (snapshot) {
         var players = snapshot.val();
-        console.log(players);
-        var playersList = lodash_1.map(players);
-        if (playersList.length >= 2) {
+        var playersLits = lodash_1.map(players);
+        console.log("entre al once", playersLits);
+        if (playersLits.length >= 2) {
             return res.json(false);
         }
         else {
-            playersRef.set({
-                nombre: req.body.nombre,
+            var id = playersRef.push({
+                nombre: nombre,
+                playerId: playerId,
                 online: true,
-                play: "",
+                playerPlay: "",
+                start: ""
+            }).key;
+            res.json(id);
+        }
+    });
+});
+app.post("/rooms/:rtdbRoomId/players", function (req, res) {
+    var serverId = req.body.serverId;
+    var rtdbRoomId = req.params.rtdbRoomId;
+    var nombre = req.body.nombre;
+    console.log(serverId);
+    var playersRef = rtdb_2.rtdb.ref("/rooms/" + rtdbRoomId + "/players");
+    playersRef.once("value", function (snapshot) {
+        var players = snapshot.val();
+        var playerList = lodash_1.map(players);
+        playerList.forEach(function (element, index) {
+            if (element.nombre == nombre) {
+                playersRef.child(index).update({
+                    start: "on"
+                });
+                res.status(200).json("salio todo ok");
+            }
+        });
+        if (serverId) {
+            playersRef.child(serverId).update({
                 start: "on"
             });
-            res.json(true);
+            res.status(200).json("se actualizo on");
         }
     });
 });

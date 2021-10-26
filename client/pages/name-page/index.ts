@@ -129,16 +129,18 @@ export function initNamePage(params){
    
            
         }else{
-            state.signup(()=>{
-               state.signIn(()=>{
-                     state.accessToRoom(()=>{
-                              state.listenRoom(()=>{
-                                 params.goTo("/instructions");
-                              })
-                  })
+               state.signup(()=>{
+                  state.signIn(()=>{
+                        state.accessToRoom(()=>{
+                           state.addPlayerDos(()=>{
+                           state.listenRoom(()=>{
+                               params.goTo("/instructions");
+                           })
+                     }) 
+                     })
+                    })
                })
-            })
-        }
+             }
 
 
     })

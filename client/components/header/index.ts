@@ -15,7 +15,7 @@ export function headerComp(){
                 <div class="container">
                 <div class= "container-name">
                 <h3>${currentState.nombre}<h3>
-                <h3>Nombre2<h3>
+                <h3>${currentState.anotherPlayer}<h3>
                 </div>
                 <div class = "container-room">
                 <h3>Sala</h3>
@@ -28,7 +28,7 @@ export function headerComp(){
 
                 .container{
                     min-width: 700px;
-                    min-height: 250px;
+                    min-height: 180px;
                     display:flex;
                     flex-direction: row;
                     justify-content: space-between;

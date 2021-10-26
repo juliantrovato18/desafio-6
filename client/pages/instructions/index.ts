@@ -79,7 +79,10 @@ export function initinstructionsPage(params){
     `
         div.appendChild(style);
     div.querySelector(".button").addEventListener("click",()=>{
-        params.goTo("/play");
+        state.listenRoom(()=>{
+                params.goTo("/info");
+        })
+        
     })
     return div;
 }

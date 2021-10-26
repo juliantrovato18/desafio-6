@@ -17,8 +17,13 @@ type Jugada = "piedra" | "papel" | "tijeras";
             computerPlay: "",
             myPlay : "",
             anotherPlayer: "",
+            online:"",
+            anotherPlayerOnline:"",
+            anotherPlayerId:"",
             start: "",
-            playerPlay:"",
+            serverId:"",
+            anotherStart:"",
+            anotherPlayerPlay:"",
             originalPlay:""
         ,
         
@@ -37,21 +42,24 @@ type Jugada = "piedra" | "papel" | "tijeras";
     
     listenRoom(callback){
          const currentState = this.getState();
-         const roomRef = rtdb.ref("/rooms/"+ currentState.rtdbRoomId);
+         const roomRef = rtdb.ref("/rooms/"+ currentState.rtdbRoomId+"/players");
           roomRef.on("value", (snapshot) =>{
            const players = snapshot.val();
           const playersList:any = map(players);
+          console.log("playersList",playersList);
           playersList.forEach((element, index) => {
         //    if (element.nombre == currentState.nombre) {
         //           currentState.playerId = index.toString();
         //   }
           if(element.nombre != currentState.nombre){
+              console.log("soy el estate ahora", currentState);
              currentState.anotherPlayer = element.nombre
-             currentState.playerPlay = element.playerPlay
-             currentState.start = element.start
+             currentState.anotherPlayerPlay = element.originalPlay
+             currentState.anotherStart = element.start
             }
          })
          this.setState(currentState);
+         
         })
          if(callback) callback();
          },
@@ -74,31 +82,7 @@ type Jugada = "piedra" | "papel" | "tijeras";
         currentState.nombre = nombre;
     },
 
-    addPlayer(callback) {
-        const currentState = this.getState();
     
-        const rtdbRoomId = currentState.rtdbRoomId;
-    
-        let data = fetch("/rooms/" + rtdbRoomId, {
-          method: "post",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify({
-            nombre: currentState.nombre,
-            playerId: currentState.playerId,
-          }),
-        })
-          .then((res) => {
-            return res.json();
-          })
-          .then((data) => {
-            this.listenRoom();
-    
-            return data;
-          });
-        return data;
-      },
     
 
 
@@ -183,24 +167,52 @@ type Jugada = "piedra" | "papel" | "tijeras";
             })
         },
 
+     addPlayerDos(callback){
+        const currentState = state.getState();
+        console.log(currentState);
+        const rtdbRoomId = currentState.rtdbRoomId;
+        console.log("soy este", rtdbRoomId);
+        fetch(API_BASE_URL+"/rooms/"+rtdbRoomId,{
+            method: "post",
+            headers:{
+                "content-type": "application/json",
+              },
+            body: JSON.stringify({nombre:currentState.nombre,
+            playerId: currentState.playerId})
+        }).then(res=>{
+                return res.json()
+         }).then(data=>{
+             currentState.serverId = data;
+            console.log(data);
+            callback();
+         })
+              
 
-        changeState(callback){
+     },
+        changeStart(callback){
             const currentState = state.getState();
-
-            fetch("/rooms"+ currentState.rtdbRoomId+ "/players", {
+            const rtdbRoomId = currentState.rtdbRoomId
+            const serverKey = currentState.serverId
+            const nombre = currentState.nombre
+            console.log("/rooms/"+rtdbRoomId+"/players");
+            fetch(API_BASE_URL+"/rooms/"+rtdbRoomId+"/players", {
                 method: "post",
                 headers:{
                     "content-type": "application/json"
                 },
                 body: JSON.stringify({
-                    roomId: currentState.roomId,
-                    playerId: currentState.playerId,
                     nombre: currentState.nombre,
-                    playerPlay: currentState.playerPlay,
-                    start: currentState.start
+                    serverKey: currentState.serverId
                 })
+            }).then((res)=>{
+                console.log(res);
+                 return res.json()
+            }).then((data)=>{
+                console.log(data, "soy data!");
+                
+                if(callback) callback();
             })
-            if(callback) callback();
+            
         },
 
 

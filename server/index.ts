@@ -94,15 +94,13 @@ app.post("/rooms", (req, res)=>{
         const roomRef = rtdb.ref("/rooms/"+ nanoid());
         if(doc.exists){
            roomRef.set({
-               players:[
-                {
+               players:[{
                 nombre:nombre,
                 playerId: playerId,
                 online: true,
                 playerPlay:"",
-                start:""
-               }
-            ],
+                start:"",
+               }],
             roomId:"",
             rtdbRoomId: ""
 
@@ -129,27 +127,73 @@ app.post("/rooms", (req, res)=>{
 
 app.post("/rooms/:rtdbRoomId", (req, res)=>{
     const {rtdbRoomId} = req.params;
+    const {nombre} = req.body;
+    const {playerId} = req.body;
     
-    const playersRef = rtdb.ref("/rooms/"+rtdbRoomId+"/players")
-        playersRef.once("value", (snapshot)=>{
-            const players = snapshot.val();
-            console.log(players); 
+    
+    const playersRef = rtdb.ref("/rooms/"+rtdbRoomId+"/players");
+        
+        playersRef.once("value",(snapshot)=>{
             
-            const playersList = map(players)
-            if(playersList.length >= 2){
+            const players = snapshot.val();
+            const playersLits = map(players);
+            console.log("entre al once", playersLits);
+            if(playersLits.length >= 2){
+                
                 return res.json(false);
             }else{
-                playersRef.set({
-                    nombre: req.body.nombre,
+                 
+                const id = playersRef.push({
+                    nombre:nombre,
+                    playerId: playerId,
                     online: true,
-                    play: "",
-                    start: "on"
-                })
-                res.json(true);
+                    playerPlay:"",
+                    start:""
+                    }).key
+                
+                res.json(id);
             }
-        });
-        });
+            
+        })
+        
+    
+})
+        
 
+app.post("/rooms/:rtdbRoomId/players", (req, res)=>{
+    const {serverId} = req.body;
+    const {rtdbRoomId} = req.params;
+    const {nombre} = req.body;
+    console.log(serverId);
+    const playersRef = rtdb.ref("/rooms/"+rtdbRoomId+"/players");
+    
+        playersRef.once("value", (snapshot)=>{
+            const players = snapshot.val();
+            const playerList:any = map(players);
+
+            playerList.forEach((element, index) => {
+                
+                if(element.nombre == nombre){
+                    playersRef.child(index).update({
+                        start: "on"
+                    })
+                    
+                    res.status(200).json("salio todo ok")
+                
+                }
+                
+            });
+            if(serverId){
+                playersRef.child(serverId).update({
+                    start:"on"
+                })
+                res.status(200).json("se actualizo on")
+            }
+            
+        })
+        
+
+})
 
 // let contador = 1;
 // app.post("/rooms/:rtdbRoomId/players", (req, res)=>{
