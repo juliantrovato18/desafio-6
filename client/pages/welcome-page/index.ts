@@ -50,7 +50,9 @@ export function initWelcomePage(params){
          top: 40px;
          }
             .container-title {
-         margin: 30px 20px;
+               min-width: 200px;
+                max-height: 240px; 
+            margin: 30px 20px;
              }
         .container-button {
          min-width: 320px;
@@ -61,7 +63,7 @@ export function initWelcomePage(params){
          .section {
             background-image:url(${imgFondo});
             display: flex;
-            height: 100vh;
+            min-height: 667px;
          flex-direction: column;
             justify-content: center;
         align-items: center;
@@ -90,6 +92,14 @@ export function initWelcomePage(params){
             margin-top: 20px;
                align-items: center;
                justify-content: center;
+            }
+            .title{
+               font-size: 60px;
+               font-weight: bold;
+               font-family: 'Odibee Sans', cursive;
+               color: #009048;
+               padding: 20px;
+         
             }
   
     `

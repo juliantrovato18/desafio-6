@@ -94,7 +94,8 @@ app.post("/rooms", function (req, res) {
                 var longRoomId = roomRef.key;
                 var roomId = 1000 + Math.floor(Math.random() * 999);
                 roomColl.doc(roomId.toString()).set({
-                    rtdbRoomId: longRoomId
+                    rtdbRoomId: longRoomId,
+                    history: []
                 }).then(function () {
                     res.json({
                         id: roomId.toString()
@@ -109,6 +110,7 @@ app.post("/rooms", function (req, res) {
         }
     });
 });
+//crea al jugador 2 en la rtdb
 app.post("/rooms/:rtdbRoomId", function (req, res) {
     var rtdbRoomId = req.params.rtdbRoomId;
     var nombre = req.body.nombre;
@@ -133,79 +135,141 @@ app.post("/rooms/:rtdbRoomId", function (req, res) {
         }
     });
 });
-app.post("/rooms/:rtdbRoomId/players", function (req, res) {
-    var serverId = req.body.serverId;
-    var rtdbRoomId = req.params.rtdbRoomId;
-    var nombre = req.body.nombre;
-    console.log(serverId);
-    var playersRef = rtdb_2.rtdb.ref("/rooms/" + rtdbRoomId + "/players");
-    playersRef.once("value", function (snapshot) {
-        var players = snapshot.val();
-        var playerList = lodash_1.map(players);
-        playerList.forEach(function (element, index) {
-            if (element.nombre == nombre) {
-                playersRef.child(index).update({
-                    start: "on"
-                });
-                res.status(200).json("salio todo ok");
-            }
-        });
-        if (serverId) {
-            playersRef.child(serverId).update({
-                start: "on"
-            });
-            res.status(200).json("se actualizo on");
-        }
-    });
-});
-// let contador = 1;
+// app.post("/rooms/:rtdbRoomId/players", (req, res)=>{
+//     const {serverId} = req.body;
+//     const {playerId} = req.body;
+//     const {rtdbRoomId} = req.params;
+//     const {nombre} = req.body;
+//     console.log(serverId);
+//     const playersRef = rtdb.ref("/rooms/"+rtdbRoomId+"/players");
+//     const refPlayer2 = rtdb.ref("/rooms/"+rtdbRoomId+"/players/"+serverId);
+//     console.log(req.body, "soy req");
+//         playersRef.once("value", (snapshot)=>{
+//             const players = snapshot.val();
+//             const playerList:any = map(players);
+//             playerList.forEach((element, index) => {
+//                 if(element.nombre == nombre){
+//                     playersRef.child(index).update({
+//                         start: "on"
+//                     })
+//                     res.status(200).json("salio todo ok")
+//                 }
+//             });
+//             if(serverId != ""){
+//                 refPlayer2.update({
+//                     start:"on"
+//                 })
+//                 res.status(200).json("se actualizo on")
+//             }
+//         })
+// })
 // app.post("/rooms/:rtdbRoomId/players", (req, res)=>{
 //     const rtdbRoomId = req.params.rtdbRoomId;
 //     const player = req.body;
 //     const newPlayer = [];
-//     const playerRef = rtdb.ref("/rooms" + rtdbRoomId + "/players");
+//     const playerRef = rtdb.ref("/rooms/"+rtdbRoomId+"/players");
 //     playerRef.once("value", (snapshot)=>{
-//         console.log(playerRef);
 //         const players = snapshot.val();
-//         const playersList = map(players);
+//         const playersList = map(players)
 //         playersList.forEach((element:any, index)=>{
-//             if(element.nombre == player.nombre){
+//             if(element.nombre ==  player.nombre){
 //                 newPlayer.push({
-//                    anotherPlayer: player.anotherPlayer,
-//                    anotherPlayerPlay: player.anotherPlayerPlay,
-//                    roomId: player.roomId,
-//                    start: player.start 
+//                     nombre: player.nombre,
+//                     roomId: player.roomId,
+//                     online: player.online,
+//                     start: player.start,
+//                     play: player.play,
+//                     userKey: index.toString()
 //                 })
 //             }else{
 //                 newPlayer.push(element);
 //             }
 //         })
+//     })
+// })
+var contador = 1;
+app.post("/rooms/:rtdbRoomId/players", function (req, res) {
+    var rtdbRoomId = req.params.rtdbRoomId;
+    var player = req.body;
+    var newPlayer = [];
+    console.log("entre", req.body);
+    var playerRef = rtdb_2.rtdb.ref("/rooms/" + rtdbRoomId + "/players");
+    playerRef.once("value", function (snapshot) {
+        var players = snapshot.val();
+        var playersList = lodash_1.map(players);
+        playersList.forEach(function (element, index) {
+            if (element.nombre == player.nombre) {
+                newPlayer.push({
+                    nombre: player.nombre,
+                    playerId: player.playerId,
+                    roomId: player.roomId,
+                    online: true,
+                    myPlay: player.myPlay,
+                    start: "on",
+                    serverId: index.toString()
+                });
+            }
+            else {
+                newPlayer.push(element);
+            }
+        });
+        playerRef.set(newPlayer).then(function (err) {
+            console.log(newPlayer, "soy newPlayer", contador, "soy contador");
+            if (newPlayer[0].myPlay != "" && newPlayer[1].myPlay != "") {
+                contador++;
+                console.log(contador, "contador");
+                console.log("entro al if newplayer", newPlayer);
+                var player1 = {
+                    nombre: newPlayer[0].nombre,
+                    myPlay: newPlayer[0].myPlay
+                };
+                var player2 = {
+                    nombre: newPlayer[1].nombre,
+                    myPlay: newPlayer[1].myPlay
+                };
+                var jugada_1 = { player1: player1, player2: player2 };
+                var data_1;
+                roomColl.doc(newPlayer[0].roomId).get().then(function (snap) {
+                    console.log("entro1");
+                    data_1 = snap.data();
+                    data_1.history.push(jugada_1);
+                    roomColl.doc(newPlayer[0].roomId).set(data_1).then(function () {
+                        console.log("entro");
+                    });
+                });
+                contador = 0;
+            }
+            res.json("terminado");
+        });
+    });
+});
+//}) aca y borrar todo lo demas
+//jugadas
 //         playerRef.set(newPlayer).then((err)=>{
-//             if (newPlayer[0].playerPlay != "" && newPlayer[1].playerPlay != "") {
-//                 if (contador == 3) {
-//                   const player1 = {
-//                     anotherPlayer: newPlayer[0].nombre,
-//                     anotherPlayerPlay: newPlayer[0].anotherPlayerPlay,
-//                   };
-//                   const player2 = {
-//                     anotherPlayer: newPlayer[1].nombre,
-//                     anotherPlayerPlay: newPlayer[1].anotherPlayerPlay,
-//                   };
-//                   const jugada = { player1, player2 };
-//                   let data;
-//                   roomColl.doc(newPlayer[0].roomId).get().then((snap)=>{
-//                     data = snap.data();
-//                     data.history.push(jugada);
-//                     roomColl.doc(newPlayer[0].roomId).set(data).then(()=>{
-//                         console.log("entro");
-//                     })
-//                   })
-//                   contador = 0;
-//                 }
-//                 contador ++;
-//         }
-//             res.json("ahora si");
-//         })
+//         if (newPlayer[0].myPlay != "" && newPlayer[1].myPlay != "") {
+//             if (contador == 3) {
+//               const player1 = {
+//                 nombre: newPlayer[0].nombre,
+//                 myPlay: newPlayer[0].myPlay,
+//               };
+//               const player2 = {
+//                 nombre: newPlayer[1].nombre,
+//                 myPlay: newPlayer[1].myPlay,
+//               };
+//               const jugada = { player1, player2 };
+//               let data;
+//               roomColl.doc(newPlayer[0].roomId).get().then((snap)=>{
+//                 data = snap.data();
+//                 data.history.push(jugada);
+//                 roomColl.doc(newPlayer[0].roomId).set(data).then(()=>{
+//                     console.log("entro");
+//                 })
+//               })
+//               contador = 0;
+//             }
+//             contador ++;
+//     }
+//         res.json("terminado");
 //     })
 // })
 // app.post("/rooms/:rtdbRoomId", (req, res)=>{

@@ -36,7 +36,7 @@ export function initPageResultsLose(params){
     
     div.appendChild(style);
     div.querySelector(".button").addEventListener("click",()=>{
-        params.goTo("/instructions");
+        params.goTo("/waiting");
     })
     return div;
 }

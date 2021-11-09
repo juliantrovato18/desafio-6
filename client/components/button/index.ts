@@ -19,6 +19,8 @@ export function button(){
                     border: solid 4px blue;
                     border-radius: 4px;
                     padding: 20px;
+                    font-family: "Roboto";
+                    font-weight: bold;
                 }
             `
             button.textContent= this.textContent;

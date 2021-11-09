@@ -8,8 +8,8 @@ export function initPageResults(params){
     const div = document.createElement("div");
     const style = document.createElement("style");
     const lastState = state.getState();
-     const myState =  lastState.currentGame.myPlay;
-     const computerState = lastState.currentGame.computerPlay;
+     const myState =  lastState.myPlay;
+     const computerState = lastState.anotherPlayerPlay;
      const myPlay = document.createElement("div");
      const computerPlay = document.createElement("div");
      if(myState == "piedra" )
@@ -125,8 +125,15 @@ export function initPageResults(params){
     console.log(sectionLose);
 
     setTimeout(()=>{
+
+        lastState.anotherStart = "";
+        state.changeStart(()=>{
+            state.getHistory(()=>{
+                console.log(lastState.history, "soy resultado history");
+            })
+        })
         clearInterval(intevarlo)
-        if(state.whoWins(state.getState().currentGame.myPlay,state.getState().currentGame.computerPlay)=="ganaste")
+        if(state.whoWins(state.getState().myPlay,state.getState().anotherPlayerPlay)=="ganaste")
         {
             section.style.display= "flex";
             section.style.background = "#888949E5";
@@ -136,7 +143,7 @@ export function initPageResults(params){
             
             
         }
-        if((state.whoWins(state.getState().currentGame.myPlay,state.getState().currentGame.computerPlay)=="perdiste"))
+        if((state.whoWins(state.getState().myPlay,state.getState().anotherPlayerPlay)=="perdiste"))
         {
             section.style.display = "flex";
             section.style.background = "rgba(137, 73, 73, 0.9)";
@@ -144,19 +151,25 @@ export function initPageResults(params){
             
         
         }
-        if((state.whoWins(state.getState().currentGame.myPlay,state.getState().currentGame.computerPlay)=="empataste"))
+        if((state.whoWins(state.getState().myPlay,state.getState().anotherPlayerPlay)=="empataste"))
         {
             section.style.display = "flex";
             section.style.background = "rgba(255, 233, 0, 0.7)";
             imagen.src = empate;
         }
+
+
     },1000);
 
     div.querySelector(".computer-play").appendChild(computerPlay);
     div.querySelector(".my-play").appendChild(myPlay);
     div.appendChild(style);
     div.querySelector(".button").addEventListener("click",()=>{
-        params.goTo("/instructions");
+            state.changeStart(()=>{
+                params.goTo("/waiting");
+            })
+            
+        
     })
     return div;
 }

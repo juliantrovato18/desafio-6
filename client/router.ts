@@ -5,6 +5,7 @@ import { initNamePage } from "./pages/name-page";
 import { initInfoPage } from "./pages/info-room";
 import { initPageResults } from "./pages/results-win";
 import { initAccessPage } from "./pages/access-room";
+import { initWaitingPage } from "./pages/waiting-room";
 import { initPageResultsLose } from "./pages/results-lose";
 
 const routes = [
@@ -39,6 +40,10 @@ const routes = [
     {
         path: /\/info/,
         component: initInfoPage,
+    },
+    {
+        path: /\/waiting/,
+        component: initWaitingPage,
     },
     {
         path: /\/resultslose/,

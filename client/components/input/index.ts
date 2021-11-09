@@ -18,6 +18,8 @@ export function input(){
                 min-width: 360px;
                 min-height: 87px;
                 border-radius: 2px;
+                font-family: 'Odibee Sans', cursive;
+                font-weight: 400;
                 }
             `
             shadow.appendChild(div);

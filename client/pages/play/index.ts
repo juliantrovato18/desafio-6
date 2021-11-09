@@ -73,10 +73,26 @@ export function initiPlayPage(params){
             myPlay: e.detail.myPlay
         }})
         
+        
+        const currentState = state.getState();
+            console.log("afuera del if", currentState);
+            const intevarlo = setInterval(()=>{
+        if(currentState.anotherPlayerPlay  && currentState.myPlay != ""){
+            console.log("current", currentState);
+            clearInterval(intevarlo);
+            state.changeStart(()=>{
+                state.getHistory(()=>{
+                    state.getScore()
+                    params.goTo("/results");
+                })
+                    
+                
+            })
+            
+            
+        }
+        },500)
         state.setMove(e.detail.myPlay)
-        
-        
-        params.goTo("/results");
         })
     })
     contador.addEventListener("change", (e:any)=>{

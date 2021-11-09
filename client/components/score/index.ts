@@ -8,15 +8,17 @@ export function scoreComp(){
         }
         render(){
             const shadow = this.attachShadow({mode: 'open'});
+            const currentState = state.getState();
             const div = document.createElement("div");
             const style= document.createElement("style");
             const score = state.getScore();
+            console.log("soy el getScore", score);
             
             div.innerHTML = `
                 <div class="container">
                 <h3 class="title">Score</h3>
-                <custom-text class="text" variant="body">Vos: ${score.myScore}</custom-text>
-                <custom-text class="text" variant="body">Maquina: ${score.computerScore}</custom-text>
+                <custom-text class="text" variant="body">${currentState.nombre}: ${score.scorePlayerOne}</custom-text>
+                <custom-text class="text" variant="body">${currentState.anotherPlayer}: ${score.scorePlayerTwo}</custom-text>
                 </div> 
             `
 

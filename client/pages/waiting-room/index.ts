@@ -1,16 +1,14 @@
 const imgFondo = require("url:../../img/fondo.png");
 import { state } from "../../state";
-export function initinstructionsPage(params){
+
+export function initWaitingPage(params){
     const currentState = state.getState();
     const div = document.createElement("div");
     div.innerHTML = `
         <section class = "section">
         <custom-header></custom-header>
         <div class="container-title">
-        <custom-text variant="body">Comparti el codigo ${currentState.roomId} con tu contrincante</custom-text>
-        </div>
-        <div class="container-button">
-        <button-comp class="button">Empezar</button-comp>
+        <custom-text variant="body">Esperando a que ${currentState.anotherPlayer} presione jugar</custom-text>
         </div>
         <div class="contenedor-ppt">
         <custom-tijera class="elementos"></custom-tijera>
@@ -76,20 +74,25 @@ export function initinstructionsPage(params){
         }
   
     
-    `;
-        div.appendChild(style);
-            const cs = state.getState();
-            const intevarlo = setInterval(()=>{
-                console.log(cs.anotherPlayerOnline, "soy cs");
-                    if(cs.anotherPlayerOnline == true){
-                        clearInterval(intevarlo);
-                        console.log("res");
-                        params.goTo("/info");
-                    }
-            }, 1000);
-                    
-                    
-                    
+    `
     
+        div.appendChild(style);
+        const cs = state.getState();
+        const intevarlo = setInterval(()=>{
+            console.log(cs.anotherPlayerOnline, "soy cs");
+                if(cs.anotherPlayerOnline == true){
+                    clearInterval(intevarlo);
+                    console.log("res");
+                    params.goTo("/play");
+                }
+                }, 1000);
+        
+                
+            
+              
+        
+            
+        
+        
     return div;
 }

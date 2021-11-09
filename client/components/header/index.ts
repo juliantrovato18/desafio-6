@@ -25,7 +25,16 @@ export function headerComp(){
             `
 
             style.innerHTML = `
+            .container{
+                min-width: 300px;
+                min-height: 180px;
+                display:flex;
+                flex-direction: row;
+                justify-content: space-between;
 
+                @media (min-width:700px){
+
+                
                 .container{
                     min-width: 700px;
                     min-height: 180px;
@@ -34,7 +43,7 @@ export function headerComp(){
                     justify-content: space-between;
 
                 }
-                
+            }
             `
             shadow.appendChild(div);
             shadow.appendChild(style);

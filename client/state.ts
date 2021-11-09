@@ -14,10 +14,10 @@ type Jugada = "piedra" | "papel" | "tijeras";
             playerId: "",
             roomId: "",
             rtdbRoomId: "",
-            computerPlay: "",
             myPlay : "",
             anotherPlayer: "",
             online:"",
+            serverKey:"",
             anotherPlayerOnline:"",
             anotherPlayerId:"",
             start: "",
@@ -33,29 +33,31 @@ type Jugada = "piedra" | "papel" | "tijeras";
         
     },
     
-    init(){
-        const localData = localStorage.getItem("saved-state");
-        if(JSON.parse(localData) != null)
-        this.data.history=(JSON.parse(localData));
+    // init(){
+    //     const localData = localStorage.getItem("saved-state");
+    //     if(JSON.parse(localData) != null)
+    //     this.data.history=(JSON.parse(localData));
         
-    },
+    // },
     
     listenRoom(callback){
          const currentState = this.getState();
-         const roomRef = rtdb.ref("/rooms/"+ currentState.rtdbRoomId+"/players");
+         const roomRef = rtdb.ref("/rooms/"+currentState.rtdbRoomId+"/players");
           roomRef.on("value", (snapshot) =>{
            const players = snapshot.val();
           const playersList:any = map(players);
           console.log("playersList",playersList);
           playersList.forEach((element, index) => {
-        //    if (element.nombre == currentState.nombre) {
-        //           currentState.playerId = index.toString();
-        //   }
+            if (element.nombre == currentState.nombre) {
+                   currentState.serverId = index.toString();
+           }
           if(element.nombre != currentState.nombre){
               console.log("soy el estate ahora", currentState);
-             currentState.anotherPlayer = element.nombre
-             currentState.anotherPlayerPlay = element.originalPlay
-             currentState.anotherStart = element.start
+             currentState.anotherPlayer = element.nombre;
+             currentState.anotherPlayerId = element.playerId;
+             currentState.anotherPlayerOnline = element.online;
+             currentState.anotherPlayerPlay = element.myPlay;
+             currentState.anotherStart = element.start;
             }
          })
          this.setState(currentState);
@@ -183,7 +185,7 @@ type Jugada = "piedra" | "papel" | "tijeras";
                 return res.json()
          }).then(data=>{
              currentState.serverId = data;
-            console.log(data);
+            console.log("data del svId", data);
             callback();
          })
               
@@ -191,9 +193,8 @@ type Jugada = "piedra" | "papel" | "tijeras";
      },
         changeStart(callback){
             const currentState = state.getState();
-            const rtdbRoomId = currentState.rtdbRoomId
-            const serverKey = currentState.serverId
-            const nombre = currentState.nombre
+            const rtdbRoomId = currentState.rtdbRoomId;
+            
             console.log("/rooms/"+rtdbRoomId+"/players");
             fetch(API_BASE_URL+"/rooms/"+rtdbRoomId+"/players", {
                 method: "post",
@@ -202,10 +203,14 @@ type Jugada = "piedra" | "papel" | "tijeras";
                 },
                 body: JSON.stringify({
                     nombre: currentState.nombre,
-                    serverKey: currentState.serverId
+                    playerId : currentState.playerId,
+                    serverId: currentState.serverId,
+                    start: currentState.start,
+                    roomId:currentState.roomId,
+                    myPlay: currentState.myPlay
                 })
             }).then((res)=>{
-                console.log(res);
+                console.log("soy res", res);
                  return res.json()
             }).then((data)=>{
                 console.log(data, "soy data!");
@@ -215,72 +220,100 @@ type Jugada = "piedra" | "papel" | "tijeras";
             
         },
 
+        
 
-    setMove(move:Jugada){
+
+    setMove(move:string){
         const currentState = state.getState();
-        currentState.currentGame.myPlay = move;
-        let random = Math.floor(Math.random() *3);
-        console.log(random, "random");
-        if(random == 0){
-            currentState.currentGame.computerPlay = "tijeras";
-        }
-        if (random == 1){
-            currentState.currentGame.computerPlay = "piedra";
-        }
-        if (random == 2){
-            currentState.currentGame.computerPlay = "papel";
-        }
+        currentState.myPlay = move;
+        this.changeStart();
 
-        this.pushToHistory(currentState.currentGame.myPlay, currentState.currentGame.computerPlay);
+        //this.pushToHistory(currentState.currentGame.myPlay, currentState.currentGame.computerPlay);
     },
+
+     getHistory(callback){
+        const currentState = state.getState();
+
+        fetch("/rooms/"+currentState.roomId).then((res)=>{
+            return res.json();
+        }).then((data)=>{
+            console.log(data," soy data history");
+            currentState.history = data.history;
+            console.log("soy el history", currentState.history);
+            
+        })
+        if(callback) callback();
+    },
+
     getScore(){
-        let myScore =0;
-        let computerScore = 0;
-        let history = state.data.history
+        
+        
+        let currentState = this.getState();
+        let history = currentState.history
+            console.log(currentState.history, "soy el cs history");
+        let scorePlayerOne =0;
+        let scorePlayerTwo = 0;
         console.log(history);
         for (const s of history) {
-            
-            if(this.whoWins(s.myPlay,s.computerPlay)=="ganaste")
-            myScore++;
-            if(this.whoWins(s.myPlay,s.computerPlay)=="perdiste")
-            computerScore++;
+            console.log("somos S", s);
+            if(currentState.nombre == s.player1.nombre){
+                if(this.whoWins(s.player1.myPlay,s.player2.myPlay)=="ganaste"){
+                    scorePlayerOne++;
+                }
+                if(this.whoWins(s.player1.myPlay,s.player2.myPlay)=="perdiste"){
+                   scorePlayerTwo++;
+                }
+                
+            }
+            if(currentState.nombre == s.player2.nombre){
+                if(this.whoWins(s.player2.myPlay,s.player1.myPlay)=="ganaste"){
+                    scorePlayerOne++;
+                }
+                if(this.whoWins(s.player2.myPlay,s.player1.myPlay)=="perdiste"){
+                   scorePlayerTwo++;
+                }
+            }
+                
+             
         } 
         
-        return {myScore,computerScore}
+        return {scorePlayerOne,scorePlayerTwo}
     },
-    pushToHistory(myPlay:Jugada, computerPlay:Jugada){
+    pushToHistory(myPlay:Jugada, anotherPlayerPlay:Jugada){
         const currentState = state.getState();
-        currentState.history.push({myPlay,computerPlay});
+        currentState.history.push({myPlay,anotherPlayerPlay});
         localStorage.setItem("saved-state",JSON.stringify(currentState.history));
 
     },
 
-    whoWins(myPlay: Jugada, computerPlay: Jugada){
+    
+
+    whoWins(myPlay: Jugada, anotherPlayerPlay: Jugada){
         if(myPlay == "piedra"){
-            if(computerPlay == "papel")
+            if(anotherPlayerPlay == "papel")
             return "perdiste";
-        if(computerPlay == "tijeras")
+        if(anotherPlayerPlay == "tijeras")
             return "ganaste";
-        if(computerPlay == "piedra")
+        if(anotherPlayerPlay == "piedra")
             return "empataste";
         }
 
         if(myPlay == "tijeras"){
-            if(computerPlay == "papel")
+            if(anotherPlayerPlay == "papel")
             return "ganaste";
-        if(computerPlay == "piedra")
+        if(anotherPlayerPlay == "piedra")
             return "perdiste";
-        if(computerPlay == "tijeras")
+        if(anotherPlayerPlay == "tijeras")
             return "empataste";
         }
 
 
         if(myPlay == "papel"){
-            if(computerPlay == "tijeras")
+            if(anotherPlayerPlay == "tijeras")
             return "perdiste";
-        if(computerPlay == "piedra")
+        if(anotherPlayerPlay == "piedra")
             return "ganaste";
-        if(computerPlay == "papel")
+        if(anotherPlayerPlay == "papel")
             return "empataste";
         }
     }

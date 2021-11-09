@@ -55,7 +55,9 @@ export function initNamePage(params){
          top: 40px;
          }
             .container-title {
-         margin: 30px 20px;
+            margin: 30px 20px;
+            min-width:200px;
+            max-height:230px;
              }
         .container-button {
             display:flex;
@@ -69,7 +71,7 @@ export function initNamePage(params){
          .section {
             background-image:url(${imgFondo});
             display: flex;
-            height: 100vh;
+            max-height: 667px;
          flex-direction: column;
             justify-content: center;
         align-items: center;
@@ -78,7 +80,7 @@ export function initNamePage(params){
             .section{
                background-image:url(${imgFondo});
                display:flex;
-               height: 100vh;
+               min-height: 100vh;
                flex-direction:column;
                justify-content:space-around;
                align-items:center;
@@ -92,6 +94,15 @@ export function initNamePage(params){
          }
          .button2{
             width: 100%;
+         }
+         .title{
+            font-size: 60px;
+            font-weight: bold;
+            font-family: 'Odibee Sans', cursive;
+            color: #009048;
+            padding: 20px;
+            
+            
          }
          .container-button2 {
             min-width: 360px;

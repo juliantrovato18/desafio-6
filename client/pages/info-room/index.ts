@@ -9,7 +9,9 @@ export function initInfoPage(params){
         <custom-header></custom-header>
         <div class="container-title">
         <custom-text variant="body">Presiona jugar y elegi, piedra, papel o tijera antes de que pasen los 3 segundos.</custom-text>
-        <custom-text variant="body">Esperando a que ${currentState.anotherPlayer} este listo</custom-text>
+        </div>
+        <div class="container-button">
+        <button-comp class="button">¡Jugar!</button-comp>
         </div>
         <div class="contenedor-ppt">
         <custom-tijera class="elementos"></custom-tijera>
@@ -76,15 +78,24 @@ export function initInfoPage(params){
   
     
     `
+    
         div.appendChild(style);
         const cs = state.getState();
-        state.listenRoom(()=>{
+        const button = div.querySelector(".button")
+        button.addEventListener("click", ()=>{
             state.changeStart(()=>{
-                if(cs.start == "on"){
-                    params.goTo("/play")
-                }
+                params.goTo("/waiting");
             })
+            //va a waitingroom
+
+            
         })
+                
+            
+              
+        
+            
+        
         
     return div;
 }
