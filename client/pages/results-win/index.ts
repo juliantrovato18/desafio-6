@@ -127,7 +127,7 @@ export function initPageResults(params){
     setTimeout(()=>{
 
         lastState.anotherStart = "";
-        state.changeStart(()=>{
+        state.changeStart("start",()=>{
             state.getHistory(()=>{
                 console.log(lastState.history, "soy resultado history");
             })
@@ -165,7 +165,7 @@ export function initPageResults(params){
     div.querySelector(".my-play").appendChild(myPlay);
     div.appendChild(style);
     div.querySelector(".button").addEventListener("click",()=>{
-            state.changeStart(()=>{
+            state.changeStart("start",()=>{
                 params.goTo("/waiting");
             })
             

@@ -77,13 +77,16 @@ export function initiPlayPage(params){
         const currentState = state.getState();
             console.log("afuera del if", currentState);
             const intevarlo = setInterval(()=>{
-        if(currentState.anotherPlayerPlay  && currentState.myPlay != ""){
+        if(currentState.anotherPlayerPlay !=""  && currentState.myPlay != ""){
             console.log("current", currentState);
             clearInterval(intevarlo);
-            state.changeStart(()=>{
+            state.changeStart("play",()=>{
                 state.getHistory(()=>{
-                    state.getScore()
-                    params.goTo("/results");
+                    console.log("antes del score", currentState.history);
+                    state.getScore(()=>{
+                        params.goTo("/results");
+                    })
+                    
                 })
                     
                 

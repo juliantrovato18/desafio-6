@@ -187,12 +187,17 @@ app.post("/rooms/:rtdbRoomId", function (req, res) {
 //         })
 //     })
 // })
-var contador = 1;
+var contador = 0;
 app.post("/rooms/:rtdbRoomId/players", function (req, res) {
+    var myPlay = req.body.myPlay;
     var rtdbRoomId = req.params.rtdbRoomId;
     var player = req.body;
     var newPlayer = [];
     console.log("entre", req.body);
+    if (player.aux == "start") {
+        myPlay = "";
+    }
+    console.log("soy my play fuera", myPlay);
     var playerRef = rtdb_2.rtdb.ref("/rooms/" + rtdbRoomId + "/players");
     playerRef.once("value", function (snapshot) {
         var players = snapshot.val();
@@ -204,7 +209,7 @@ app.post("/rooms/:rtdbRoomId/players", function (req, res) {
                     playerId: player.playerId,
                     roomId: player.roomId,
                     online: true,
-                    myPlay: player.myPlay,
+                    myPlay: myPlay,
                     start: "on",
                     serverId: index.toString()
                 });
@@ -215,29 +220,29 @@ app.post("/rooms/:rtdbRoomId/players", function (req, res) {
         });
         playerRef.set(newPlayer).then(function (err) {
             console.log(newPlayer, "soy newPlayer", contador, "soy contador");
-            if (newPlayer[0].myPlay != "" && newPlayer[1].myPlay != "") {
+            if (player.aux == "play") {
                 contador++;
-                console.log(contador, "contador");
-                console.log("entro al if newplayer", newPlayer);
-                var player1 = {
-                    nombre: newPlayer[0].nombre,
-                    myPlay: newPlayer[0].myPlay
-                };
-                var player2 = {
-                    nombre: newPlayer[1].nombre,
-                    myPlay: newPlayer[1].myPlay
-                };
-                var jugada_1 = { player1: player1, player2: player2 };
-                var data_1;
-                roomColl.doc(newPlayer[0].roomId).get().then(function (snap) {
-                    console.log("entro1");
-                    data_1 = snap.data();
-                    data_1.history.push(jugada_1);
-                    roomColl.doc(newPlayer[0].roomId).set(data_1).then(function () {
-                        console.log("entro");
+                if (contador == 2) {
+                    var player1 = {
+                        nombre: newPlayer[0].nombre,
+                        myPlay: newPlayer[0].myPlay
+                    };
+                    var player2 = {
+                        nombre: newPlayer[1].nombre,
+                        myPlay: newPlayer[1].myPlay
+                    };
+                    var jugada_1 = { player1: player1, player2: player2 };
+                    var data_1;
+                    roomColl.doc(newPlayer[0].roomId).get().then(function (snap) {
+                        console.log("entro1");
+                        data_1 = snap.data();
+                        data_1.history.push(jugada_1);
+                        roomColl.doc(newPlayer[0].roomId).set(data_1).then(function () {
+                            console.log("entro");
+                        });
                     });
-                });
-                contador = 0;
+                    contador = 0;
+                }
             }
             res.json("terminado");
         });

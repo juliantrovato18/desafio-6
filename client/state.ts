@@ -17,6 +17,8 @@ type Jugada = "piedra" | "papel" | "tijeras";
             myPlay : "",
             anotherPlayer: "",
             online:"",
+            myScore: "",
+            anotherScore: "",
             serverKey:"",
             anotherPlayerOnline:"",
             anotherPlayerId:"",
@@ -173,7 +175,6 @@ type Jugada = "piedra" | "papel" | "tijeras";
         const currentState = state.getState();
         console.log(currentState);
         const rtdbRoomId = currentState.rtdbRoomId;
-        console.log("soy este", rtdbRoomId);
         fetch(API_BASE_URL+"/rooms/"+rtdbRoomId,{
             method: "post",
             headers:{
@@ -185,13 +186,12 @@ type Jugada = "piedra" | "papel" | "tijeras";
                 return res.json()
          }).then(data=>{
              currentState.serverId = data;
-            console.log("data del svId", data);
             callback();
          })
               
 
      },
-        changeStart(callback){
+        changeStart(auxiliar ,callback){
             const currentState = state.getState();
             const rtdbRoomId = currentState.rtdbRoomId;
             
@@ -205,6 +205,7 @@ type Jugada = "piedra" | "papel" | "tijeras";
                     nombre: currentState.nombre,
                     playerId : currentState.playerId,
                     serverId: currentState.serverId,
+                    aux: auxiliar,
                     start: currentState.start,
                     roomId:currentState.roomId,
                     myPlay: currentState.myPlay
@@ -245,7 +246,7 @@ type Jugada = "piedra" | "papel" | "tijeras";
         if(callback) callback();
     },
 
-    getScore(){
+    getScore(callback){
         
         
         let currentState = this.getState();
@@ -276,15 +277,22 @@ type Jugada = "piedra" | "papel" | "tijeras";
                 
              
         } 
+            if(this.whoWins(currentState.myPlay, currentState.anotherPlayerPlay) == "ganaste"){
+                scorePlayerOne ++;
+            }if(this.whoWins(currentState.myPlay, currentState.anotherPlayerPlay) == "perdiste"){
+                scorePlayerTwo ++;
+            }
+            currentState.myScore = scorePlayerOne;
+            currentState.anotherScore = scorePlayerTwo;
+            if(callback) callback();
         
-        return {scorePlayerOne,scorePlayerTwo}
     },
-    pushToHistory(myPlay:Jugada, anotherPlayerPlay:Jugada){
-        const currentState = state.getState();
-        currentState.history.push({myPlay,anotherPlayerPlay});
-        localStorage.setItem("saved-state",JSON.stringify(currentState.history));
+    // pushToHistory(myPlay:Jugada, anotherPlayerPlay:Jugada){
+    //     const currentState = state.getState();
+    //     currentState.history.push({myPlay,anotherPlayerPlay});
+    //     localStorage.setItem("saved-state",JSON.stringify(currentState.history));
 
-    },
+    // },
 
     
 

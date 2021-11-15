@@ -14,17 +14,7 @@ import { headerComp } from "./components/header";
 (function () {
     const root = document.querySelector(".root");
     initRouter(root);
-    //state.init();
-    // state.setNombre("julito");
-    // state.signIn((callback)=>{
-    //     const currentState = state.getState();
-    //     if(currentState.nombre){
-
-    //         state.askNewRoom(()=>{
-    //             state.accessToRoom();
-    //         });
-    //     }
-    // });
+    
 
     
     contadorComp();

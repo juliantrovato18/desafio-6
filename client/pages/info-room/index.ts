@@ -83,7 +83,7 @@ export function initInfoPage(params){
         const cs = state.getState();
         const button = div.querySelector(".button")
         button.addEventListener("click", ()=>{
-            state.changeStart(()=>{
+            state.changeStart("start",()=>{
                 params.goTo("/waiting");
             })
             //va a waitingroom
