@@ -3,7 +3,7 @@ import { createSemanticDiagnosticsBuilderProgram } from "typescript";
 import { rtdb } from "./rtdb";
 
 
-const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3000/";
+const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3000";
 
 type Jugada = "piedra" | "papel" | "tijeras";
  const state = {
@@ -229,7 +229,7 @@ type Jugada = "piedra" | "papel" | "tijeras";
         currentState.myPlay = move;
         this.changeStart();
 
-        //this.pushToHistory(currentState.currentGame.myPlay, currentState.currentGame.computerPlay);
+        this.pushToHistory(currentState.myPlay, currentState.anotherPlayerPlay);
     },
 
      getHistory(callback){
@@ -257,20 +257,20 @@ type Jugada = "piedra" | "papel" | "tijeras";
         console.log(history);
         for (const s of history) {
             console.log("somos S", s);
-            if(currentState.nombre == s.player1.nombre){
-                if(this.whoWins(s.player1.myPlay,s.player2.myPlay)=="ganaste"){
+            if(currentState.nombre == s.nombre){
+                if(this.whoWins(s.myPlay,s.anotherPlayerPlay)=="ganaste"){
                     scorePlayerOne++;
                 }
-                if(this.whoWins(s.player1.myPlay,s.player2.myPlay)=="perdiste"){
+                if(this.whoWins(s.myPlay,s.anotherPlayerPlay)=="perdiste"){
                    scorePlayerTwo++;
                 }
                 
             }
-            if(currentState.nombre == s.player2.nombre){
-                if(this.whoWins(s.player2.myPlay,s.player1.myPlay)=="ganaste"){
+            if(currentState.nombre == s.anotherPlayer){
+                if(this.whoWins(s.anotherPlayerPlay,s.myPlay)=="ganaste"){
                     scorePlayerOne++;
                 }
-                if(this.whoWins(s.player2.myPlay,s.player1.myPlay)=="perdiste"){
+                if(this.whoWins(s.anotherPlayerPlay,s.myPlay)=="perdiste"){
                    scorePlayerTwo++;
                 }
             }
@@ -287,12 +287,12 @@ type Jugada = "piedra" | "papel" | "tijeras";
             if(callback) callback();
         
     },
-    // pushToHistory(myPlay:Jugada, anotherPlayerPlay:Jugada){
-    //     const currentState = state.getState();
-    //     currentState.history.push({myPlay,anotherPlayerPlay});
-    //     localStorage.setItem("saved-state",JSON.stringify(currentState.history));
+     pushToHistory(myPlay:Jugada, anotherPlayerPlay:Jugada){
+        const currentState = state.getState();
+        currentState.history.push({myPlay,anotherPlayerPlay});
+        localStorage.setItem("saved-state",JSON.stringify(currentState.history));
 
-    // },
+     },
 
     
 

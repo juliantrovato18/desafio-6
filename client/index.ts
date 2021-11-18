@@ -12,10 +12,10 @@ import {state} from "./state";
 import { input } from "./components/input";
 import { headerComp } from "./components/header";
 (function () {
-    const root = document.querySelector(".root");
-    initRouter(root);
     
+    const root = document.querySelector(".root");
 
+    initRouter(root);
     
     contadorComp();
     winComp();

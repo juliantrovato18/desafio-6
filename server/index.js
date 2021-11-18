@@ -21,7 +21,6 @@ app.get("/players", function (req, res) {
     res.json({
         message: {}
     });
-    console.log(res.json);
 });
 app.get("/players/:playerId", function (req, res) {
     var playerId = req.params.playerId;
@@ -119,7 +118,6 @@ app.post("/rooms/:rtdbRoomId", function (req, res) {
     playersRef.once("value", function (snapshot) {
         var players = snapshot.val();
         var playersLits = lodash_1.map(players);
-        console.log("entre al once", playersLits);
         if (playersLits.length >= 2) {
             return res.json(false);
         }
@@ -135,58 +133,6 @@ app.post("/rooms/:rtdbRoomId", function (req, res) {
         }
     });
 });
-// app.post("/rooms/:rtdbRoomId/players", (req, res)=>{
-//     const {serverId} = req.body;
-//     const {playerId} = req.body;
-//     const {rtdbRoomId} = req.params;
-//     const {nombre} = req.body;
-//     console.log(serverId);
-//     const playersRef = rtdb.ref("/rooms/"+rtdbRoomId+"/players");
-//     const refPlayer2 = rtdb.ref("/rooms/"+rtdbRoomId+"/players/"+serverId);
-//     console.log(req.body, "soy req");
-//         playersRef.once("value", (snapshot)=>{
-//             const players = snapshot.val();
-//             const playerList:any = map(players);
-//             playerList.forEach((element, index) => {
-//                 if(element.nombre == nombre){
-//                     playersRef.child(index).update({
-//                         start: "on"
-//                     })
-//                     res.status(200).json("salio todo ok")
-//                 }
-//             });
-//             if(serverId != ""){
-//                 refPlayer2.update({
-//                     start:"on"
-//                 })
-//                 res.status(200).json("se actualizo on")
-//             }
-//         })
-// })
-// app.post("/rooms/:rtdbRoomId/players", (req, res)=>{
-//     const rtdbRoomId = req.params.rtdbRoomId;
-//     const player = req.body;
-//     const newPlayer = [];
-//     const playerRef = rtdb.ref("/rooms/"+rtdbRoomId+"/players");
-//     playerRef.once("value", (snapshot)=>{
-//         const players = snapshot.val();
-//         const playersList = map(players)
-//         playersList.forEach((element:any, index)=>{
-//             if(element.nombre ==  player.nombre){
-//                 newPlayer.push({
-//                     nombre: player.nombre,
-//                     roomId: player.roomId,
-//                     online: player.online,
-//                     start: player.start,
-//                     play: player.play,
-//                     userKey: index.toString()
-//                 })
-//             }else{
-//                 newPlayer.push(element);
-//             }
-//         })
-//     })
-// })
 var contador = 0;
 app.post("/rooms/:rtdbRoomId/players", function (req, res) {
     var myPlay = req.body.myPlay;
@@ -197,7 +143,6 @@ app.post("/rooms/:rtdbRoomId/players", function (req, res) {
     if (player.aux == "start") {
         myPlay = "";
     }
-    console.log("soy my play fuera", myPlay);
     var playerRef = rtdb_2.rtdb.ref("/rooms/" + rtdbRoomId + "/players");
     playerRef.once("value", function (snapshot) {
         var players = snapshot.val();
@@ -248,74 +193,16 @@ app.post("/rooms/:rtdbRoomId/players", function (req, res) {
         });
     });
 });
-//}) aca y borrar todo lo demas
-//jugadas
-//         playerRef.set(newPlayer).then((err)=>{
-//         if (newPlayer[0].myPlay != "" && newPlayer[1].myPlay != "") {
-//             if (contador == 3) {
-//               const player1 = {
-//                 nombre: newPlayer[0].nombre,
-//                 myPlay: newPlayer[0].myPlay,
-//               };
-//               const player2 = {
-//                 nombre: newPlayer[1].nombre,
-//                 myPlay: newPlayer[1].myPlay,
-//               };
-//               const jugada = { player1, player2 };
-//               let data;
-//               roomColl.doc(newPlayer[0].roomId).get().then((snap)=>{
-//                 data = snap.data();
-//                 data.history.push(jugada);
-//                 roomColl.doc(newPlayer[0].roomId).set(data).then(()=>{
-//                     console.log("entro");
-//                 })
-//               })
-//               contador = 0;
-//             }
-//             contador ++;
-//     }
-//         res.json("terminado");
-//     })
-// })
-// app.post("/rooms/:rtdbRoomId", (req, res)=>{
-//     const rtdbRoomId = req.params.rtdbRoomId;
-//     const playersRef = rtdb.ref("/rooms"+ rtdbRoomId +"/players");
-//     playersRef.once("value", (snapShot)=>{
-//         const players = snapShot.val();
-//         const playersList = map(players);
-//         if(playersList.length >= 2){
-//             return res.json(false);
-//         }else{
-//             playersRef.push({
-//                 nombre: req.body.nombre,
-//                 originalPlay: "",
-//                 start: "on"
-//             })
-//             res.json(true);
-//         }
-//     })
-// })
-// app.post("/rooms/:rtdbRoomId", (req, res)=>{
-//     const rtdbRoomId = req.params.rtdbRoomId;
-//     const playersRef = rtdb.ref("/rooms"+ rtdbRoomId +"/players");
-//     playersRef.once("value", (snapShot)=>{
-//         const players = snapShot.val();
-//         console.log(players);
-//         res.json("algo");
-// })
-// })
 app.get("/rooms/:roomId", function (req, res) {
     var roomId = req.params.roomId;
     console.log("roomid", roomId);
     var data;
     roomColl.doc(roomId).get().then(function (snap) {
         data = snap.data();
-        console.log(data);
         res.json(data);
     });
 });
 var rutaRelativa = path.resolve(__dirname, "../dist/index.html");
-console.log(rutaRelativa);
 app.get("*", function (req, res) {
     res.sendFile(rutaRelativa);
 });
