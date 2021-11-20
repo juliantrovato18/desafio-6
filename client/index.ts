@@ -12,7 +12,7 @@ import {state} from "./state";
 import { input } from "./components/input";
 import { headerComp } from "./components/header";
 (function () {
-    
+    state.init();
     const root = document.querySelector(".root");
 
     initRouter(root);

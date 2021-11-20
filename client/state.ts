@@ -35,12 +35,12 @@ type Jugada = "piedra" | "papel" | "tijeras";
         
     },
     
-    // init(){
-    //     const localData = localStorage.getItem("saved-state");
-    //     if(JSON.parse(localData) != null)
-    //     this.data.history=(JSON.parse(localData));
+    init(){
+        const localData = localStorage.getItem("saved-state");
+        if(JSON.parse(localData) != null)
+        this.data=(JSON.parse(localData));
         
-    // },
+    },
     
     listenRoom(callback){
          const currentState = this.getState();
@@ -63,7 +63,7 @@ type Jugada = "piedra" | "papel" | "tijeras";
             }
          })
          this.setState(currentState);
-         
+         this.pushToHistory();
         })
          if(callback) callback();
          },
@@ -193,6 +193,7 @@ type Jugada = "piedra" | "papel" | "tijeras";
      },
         changeStart(auxiliar ,callback){
             const currentState = state.getState();
+            console.log(currentState, "este es el cs 11");
             const rtdbRoomId = currentState.rtdbRoomId;
             
             console.log("/rooms/"+rtdbRoomId+"/players");
@@ -229,7 +230,7 @@ type Jugada = "piedra" | "papel" | "tijeras";
         currentState.myPlay = move;
         this.changeStart();
 
-        this.pushToHistory(currentState.myPlay, currentState.anotherPlayerPlay);
+        //this.pushToHistory(currentState.myPlay, currentState.anotherPlayerPlay);
     },
 
      getHistory(callback){
@@ -256,21 +257,22 @@ type Jugada = "piedra" | "papel" | "tijeras";
         let scorePlayerTwo = 0;
         console.log(history);
         for (const s of history) {
-            console.log("somos S", s);
-            if(currentState.nombre == s.nombre){
-                if(this.whoWins(s.myPlay,s.anotherPlayerPlay)=="ganaste"){
+            console.log("soy SSSSS", s);
+            if(currentState.nombre == s.player1.nombre){
+                if(this.whoWins(s.player1.myPlay,s.player2.myPlay)=="ganaste"){
                     scorePlayerOne++;
                 }
-                if(this.whoWins(s.myPlay,s.anotherPlayerPlay)=="perdiste"){
+                if(this.whoWins(s.player1.myPlay,s.player2.myPlay)=="perdiste"){
                    scorePlayerTwo++;
                 }
                 
             }
-            if(currentState.nombre == s.anotherPlayer){
-                if(this.whoWins(s.anotherPlayerPlay,s.myPlay)=="ganaste"){
+            if(currentState.nombre == s.player2.nombre){
+                console.log("s22", s.player2);
+                if(this.whoWins(s.player2.myPlay,s.player1.myPlay)=="ganaste"){
                     scorePlayerOne++;
                 }
-                if(this.whoWins(s.anotherPlayerPlay,s.myPlay)=="perdiste"){
+                if(this.whoWins(s.player2.myPlay,s.player1.myPlay)=="perdiste"){
                    scorePlayerTwo++;
                 }
             }
@@ -284,13 +286,15 @@ type Jugada = "piedra" | "papel" | "tijeras";
             }
             currentState.myScore = scorePlayerOne;
             currentState.anotherScore = scorePlayerTwo;
+            state.pushToHistory();
             if(callback) callback();
         
+            
     },
-     pushToHistory(myPlay:Jugada, anotherPlayerPlay:Jugada){
+     pushToHistory(){
         const currentState = state.getState();
-        currentState.history.push({myPlay,anotherPlayerPlay});
-        localStorage.setItem("saved-state",JSON.stringify(currentState.history));
+        
+        localStorage.setItem("saved-state",JSON.stringify(currentState));
 
      },
 

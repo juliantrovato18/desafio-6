@@ -183,7 +183,7 @@ app.post("/rooms/:rtdbRoomId", (req, res)=>{
                     playerId: player.playerId,
                     roomId: player.roomId,
                     online: true,
-                    myPlay: myPlay,
+                    myPlay: player.myPlay,
                     start:"on",
                     serverId:index.toString()
                 })

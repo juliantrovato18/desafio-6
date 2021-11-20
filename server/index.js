@@ -154,7 +154,7 @@ app.post("/rooms/:rtdbRoomId/players", function (req, res) {
                     playerId: player.playerId,
                     roomId: player.roomId,
                     online: true,
-                    myPlay: myPlay,
+                    myPlay: player.myPlay,
                     start: "on",
                     serverId: index.toString()
                 });
