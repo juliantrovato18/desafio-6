@@ -165,18 +165,21 @@ app.post("/rooms/:rtdbRoomId", (req, res)=>{
 
     app.post("/rooms/:rtdbRoomId/players", (req, res)=>{
         let  myPlay = req.body.myPlay;
+        let start = req.body.start;
     const rtdbRoomId = req.params.rtdbRoomId;
     const player = req.body;
     const newPlayer = [];
-    console.log("entre", req.body);
+    
     if(player.aux == "start"){
-        myPlay = ""
+        myPlay = "",
+        start = true
     }
     const playerRef = rtdb.ref("/rooms/"+rtdbRoomId+"/players");
         playerRef.once("value", (snapshot)=>{
         const players = snapshot.val();
         const playersList = map(players);
         playersList.forEach((element:any, index)=>{
+            console.log("soy element", element)
             if(element.nombre == player.nombre){
                 newPlayer.push({
                     nombre:player.nombre,
@@ -184,7 +187,7 @@ app.post("/rooms/:rtdbRoomId", (req, res)=>{
                     roomId: player.roomId,
                     online: true,
                     myPlay: player.myPlay,
-                    start:"on",
+                    start: start,
                     serverId:index.toString()
                 })
             }else{
@@ -196,7 +199,7 @@ app.post("/rooms/:rtdbRoomId", (req, res)=>{
             ).then((err)=>{
                 
                 
-                console.log(newPlayer, "soy newPlayer", contador, "soy contador");
+                
                 if(player.aux == "play"){
                     contador ++;
                     if(contador == 2){
@@ -211,12 +214,12 @@ app.post("/rooms/:rtdbRoomId", (req, res)=>{
                           const jugada = { player1, player2 };
                           let data;
                           roomColl.doc(newPlayer[0].roomId).get().then((snap)=>{
-                              console.log("entro1")
+                            
                             data = snap.data();
                             data.history.push(jugada);
         
                             roomColl.doc(newPlayer[0].roomId).set(data).then(()=>{
-                                console.log("entro");
+                            
 
                             })
                           })
@@ -233,7 +236,7 @@ app.post("/rooms/:rtdbRoomId", (req, res)=>{
 app.get("/rooms/:roomId", (req, res)=>{
 
     const {roomId} = req.params;
-    console.log("roomid", roomId);
+    
     let data; 
     roomColl.doc(roomId).get().then((snap)=>{
         

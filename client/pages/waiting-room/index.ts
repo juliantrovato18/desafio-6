@@ -79,8 +79,9 @@ export function initWaitingPage(params){
         div.appendChild(style);
         const cs = state.getState();
         const intevarlo = setInterval(()=>{
-            console.log(cs.anotherPlayerOnline, "soy cs");
-                if(cs.anotherPlayerOnline == true){
+            console.log(cs, "soy cs");
+            cs.start = true;
+                if(cs.anotherStart == true && cs.start == true){//cs.anotherOnline == true nomas
                     clearInterval(intevarlo);
                     console.log("res");
                     params.goTo("/play");

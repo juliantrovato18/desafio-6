@@ -136,18 +136,20 @@ app.post("/rooms/:rtdbRoomId", function (req, res) {
 var contador = 0;
 app.post("/rooms/:rtdbRoomId/players", function (req, res) {
     var myPlay = req.body.myPlay;
+    var start = req.body.start;
     var rtdbRoomId = req.params.rtdbRoomId;
     var player = req.body;
     var newPlayer = [];
-    console.log("entre", req.body);
     if (player.aux == "start") {
-        myPlay = "";
+        myPlay = "",
+            start = true;
     }
     var playerRef = rtdb_2.rtdb.ref("/rooms/" + rtdbRoomId + "/players");
     playerRef.once("value", function (snapshot) {
         var players = snapshot.val();
         var playersList = lodash_1.map(players);
         playersList.forEach(function (element, index) {
+            console.log("soy element", element);
             if (element.nombre == player.nombre) {
                 newPlayer.push({
                     nombre: player.nombre,
@@ -155,7 +157,7 @@ app.post("/rooms/:rtdbRoomId/players", function (req, res) {
                     roomId: player.roomId,
                     online: true,
                     myPlay: player.myPlay,
-                    start: "on",
+                    start: start,
                     serverId: index.toString()
                 });
             }
@@ -164,7 +166,6 @@ app.post("/rooms/:rtdbRoomId/players", function (req, res) {
             }
         });
         playerRef.set(newPlayer).then(function (err) {
-            console.log(newPlayer, "soy newPlayer", contador, "soy contador");
             if (player.aux == "play") {
                 contador++;
                 if (contador == 2) {
@@ -179,11 +180,9 @@ app.post("/rooms/:rtdbRoomId/players", function (req, res) {
                     var jugada_1 = { player1: player1, player2: player2 };
                     var data_1;
                     roomColl.doc(newPlayer[0].roomId).get().then(function (snap) {
-                        console.log("entro1");
                         data_1 = snap.data();
                         data_1.history.push(jugada_1);
                         roomColl.doc(newPlayer[0].roomId).set(data_1).then(function () {
-                            console.log("entro");
                         });
                     });
                     contador = 0;
@@ -195,7 +194,6 @@ app.post("/rooms/:rtdbRoomId/players", function (req, res) {
 });
 app.get("/rooms/:roomId", function (req, res) {
     var roomId = req.params.roomId;
-    console.log("roomid", roomId);
     var data;
     roomColl.doc(roomId).get().then(function (snap) {
         data = snap.data();

@@ -126,8 +126,9 @@ export function initPageResults(params){
 
     setTimeout(()=>{
 
-        lastState.anotherStart = "";
-        state.changeStart("start",()=>{
+        lastState.anotherStart = false;
+        lastState.start = false;
+        state.changeStart("no start",()=>{
             state.getHistory(()=>{
                 console.log(lastState.history, "soy resultado history");
             })
@@ -165,8 +166,14 @@ export function initPageResults(params){
     div.querySelector(".my-play").appendChild(myPlay);
     div.appendChild(style);
     div.querySelector(".button").addEventListener("click",()=>{
+        lastState.myPlay= "";
+        lastState.anotherPlayerPlay = "";
             state.changeStart("start",()=>{
-                params.goTo("/waiting");
+                state.listenRoom(()=>{
+                    
+                    params.goTo("/waiting");
+                })
+               
             })
             
         

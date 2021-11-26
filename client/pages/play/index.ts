@@ -78,7 +78,7 @@ export function initiPlayPage(params){
             console.log("afuera del if", currentState);
             const intevarlo = setInterval(()=>{
         if(currentState.anotherPlayerPlay !=""  && currentState.myPlay != ""){
-            console.log("current", currentState);
+            
             clearInterval(intevarlo);
             state.changeStart("play",()=>{
                 state.getHistory(()=>{
@@ -99,11 +99,20 @@ export function initiPlayPage(params){
         })
     })
     contador.addEventListener("change", (e:any)=>{
-        
-        
-        if(boolean == false){
-            params.goTo("/instructions")
-        }
+        const cs = state.getState();
+            if(boolean == false || cs.anotherPlayerPlay == "" ){
+                cs.start = false;
+                cs.myPlay = "";
+                state.changeStart("no start",()=>{
+                    params.goTo("/instructions")
+                })
+            
+                    
+            
+                
+
+            }
+         
         
 
     })

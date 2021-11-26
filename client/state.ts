@@ -48,16 +48,16 @@ type Jugada = "piedra" | "papel" | "tijeras";
           roomRef.on("value", (snapshot) =>{
            const players = snapshot.val();
           const playersList:any = map(players);
-          console.log("playersList",playersList);
+          
           playersList.forEach((element, index) => {
             if (element.nombre == currentState.nombre) {
                    currentState.serverId = index.toString();
            }
           if(element.nombre != currentState.nombre){
-              console.log("soy el estate ahora", currentState);
+             
              currentState.anotherPlayer = element.nombre;
              currentState.anotherPlayerId = element.playerId;
-             currentState.anotherPlayerOnline = element.online;
+             currentState.anotherPlayerOnline  = element.online;
              currentState.anotherPlayerPlay = element.myPlay;
              currentState.anotherStart = element.start;
             }
@@ -73,6 +73,7 @@ type Jugada = "piedra" | "papel" | "tijeras";
     },
     setState(newState){
         this.data = newState;
+        
           
     },
 
@@ -125,7 +126,7 @@ type Jugada = "piedra" | "papel" | "tijeras";
                 callback();
             })
         }else{
-            console.error("no hay nombre");
+            
             callback(true);
         }
     },
@@ -173,7 +174,7 @@ type Jugada = "piedra" | "papel" | "tijeras";
 
      addPlayerDos(callback){
         const currentState = state.getState();
-        console.log(currentState);
+    
         const rtdbRoomId = currentState.rtdbRoomId;
         fetch(API_BASE_URL+"/rooms/"+rtdbRoomId,{
             method: "post",
@@ -192,8 +193,9 @@ type Jugada = "piedra" | "papel" | "tijeras";
 
      },
         changeStart(auxiliar ,callback){
+            
             const currentState = state.getState();
-            console.log(currentState, "este es el cs 11");
+    
             const rtdbRoomId = currentState.rtdbRoomId;
             
             console.log("/rooms/"+rtdbRoomId+"/players");
@@ -206,6 +208,7 @@ type Jugada = "piedra" | "papel" | "tijeras";
                     nombre: currentState.nombre,
                     playerId : currentState.playerId,
                     serverId: currentState.serverId,
+                    online: currentState.online,
                     aux: auxiliar,
                     start: currentState.start,
                     roomId:currentState.roomId,
@@ -239,9 +242,7 @@ type Jugada = "piedra" | "papel" | "tijeras";
         fetch("/rooms/"+currentState.roomId).then((res)=>{
             return res.json();
         }).then((data)=>{
-            console.log(data," soy data history");
             currentState.history = data.history;
-            console.log("soy el history", currentState.history);
             
         })
         if(callback) callback();
@@ -252,7 +253,7 @@ type Jugada = "piedra" | "papel" | "tijeras";
         
         let currentState = this.getState();
         let history = currentState.history
-            console.log(currentState.history, "soy el cs history");
+            
         let scorePlayerOne =0;
         let scorePlayerTwo = 0;
         console.log(history);
